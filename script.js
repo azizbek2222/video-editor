@@ -5,65 +5,95 @@ const video = document.getElementById('main-video');
 const upload = document.getElementById('upload');
 const effectSelect = document.getElementById('effect-select');
 const timeDisplay = document.getElementById('time-display');
-const progressBar = document.getElementById('progress-bar');
+const progressPointer = document.getElementById('progress-pointer');
 const uploadLabel = document.getElementById('upload-label');
+const playBtn = document.getElementById('play-pause');
 
-// 1. Video yuklash
+// FFmpeg progress monitoring
+ffmpeg.setProgress(({ ratio }) => {
+    const percentage = Math.round(ratio * 100);
+    document.getElementById('export-status').innerText = `Saqlanmoqda... ${percentage}%`;
+    document.getElementById('export-progress-bar').style.width = percentage + "%";
+});
+
+// Video yuklash
 upload.addEventListener('change', function() {
     const file = this.files[0];
     if (file) {
         video.src = URL.createObjectURL(file);
-        uploadLabel.style.display = 'none'; // Plus tugmasini yashirish
+        uploadLabel.style.display = 'none';
         video.style.display = 'block';
     }
 });
 
-// 2. Effektlarni real vaqtda ko'rsatish
+// Play/Pause boshqaruvi
+playBtn.addEventListener('click', () => {
+    if (video.paused) {
+        video.play();
+        playBtn.innerText = "⏸ Pause";
+    } else {
+        video.pause();
+        playBtn.innerText = "▶ Play";
+    }
+});
+
+// Effektni real vaqtda ko'rish
 effectSelect.addEventListener('change', () => {
     video.style.filter = effectSelect.value;
 });
 
-// 3. Timeline harakati
+// Timeline yangilanishi
 video.addEventListener('timeupdate', () => {
     const progress = (video.currentTime / video.duration) * 100;
-    progressBar.style.left = progress + "%";
+    progressPointer.style.left = progress + "%";
     
-    // Vaqtni formatlash
     let mins = Math.floor(video.currentTime / 60);
     let secs = Math.floor(video.currentTime % 60);
     timeDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 });
 
-// 4. FFmpeg bilan SAVE (Export)
+// Haqiqiy SAVE (Export) funksiyasi
 async function saveVideo() {
-    const btn = document.getElementById('download-btn');
     if (!upload.files[0]) return alert("Avval video yuklang!");
 
-    btn.innerText = "⏳...";
-    btn.disabled = true;
+    const overlay = document.getElementById('export-overlay');
+    overlay.style.display = 'flex';
 
-    if (!ffmpeg.isLoaded()) await ffmpeg.load();
+    try {
+        if (!ffmpeg.isLoaded()) await ffmpeg.load();
 
-    const file = upload.files[0];
-    ffmpeg.FS('writeFile', 'in.mp4', await fetchFile(file));
+        const file = upload.files[0];
+        ffmpeg.FS('writeFile', 'input_file.mp4', await fetchFile(file));
 
-    // Tanlangan filtrni FFmpeg buyrug'iga aylantirish
-    let filterCmd = 'copy'; // Default
-    if (effectSelect.value.includes('grayscale')) filterCmd = 'format=gray';
-    if (effectSelect.value.includes('sepia')) filterCmd = 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131';
+        // Effektni tahlil qilish
+        let filter = 'copy';
+        const val = effectSelect.value;
+        if (val.includes('grayscale')) filter = 'format=gray';
+        else if (val.includes('sepia')) filter = 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131';
+        else if (val.includes('invert')) filter = 'negate';
+        else if (val.includes('blur')) filter = 'boxblur=5:1';
 
-    await ffmpeg.run('-i', 'in.mp4', '-vf', filterCmd, 'out.mp4');
+        // FFmpeg buyrug'ini bajarish
+        await ffmpeg.run('-i', 'input_file.mp4', '-vf', filter, '-preset', 'ultrafast', 'output_file.mp4');
 
-    const data = ffmpeg.FS('readFile', 'out.mp4');
-    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inshot_export.mp4';
-    a.click();
+        // Natijani o'qish va yuklab olish
+        const data = ffmpeg.FS('readFile', 'output_file.mp4');
+        const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+        
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'InShot_Video_' + Date.now() + '.mp4';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
 
-    btn.innerText = "SAVE";
-    btn.disabled = false;
+    } catch (error) {
+        console.error(error);
+        alert("Xatolik yuz berdi. Brauzer xotirasi to'lgan bo'lishi mumkin.");
+    } finally {
+        overlay.style.display = 'none';
+        document.getElementById('export-progress-bar').style.width = "0%";
+    }
 }
 
 document.getElementById('download-btn').addEventListener('click', saveVideo);

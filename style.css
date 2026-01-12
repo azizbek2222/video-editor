@@ -1,136 +1,34 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+body { background-color: #000; color: #fff; display: flex; justify-content: center; overflow: hidden; }
 
-body {
-    background-color: #000;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-}
-
-.inshot-container {
-    width: 100%;
-    max-width: 500px; /* Mobil ko'rinish uchun */
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: #1a1a1a;
-}
+.inshot-container { width: 100%; max-width: 500px; height: 100vh; display: flex; flex-direction: column; background: #1a1a1a; position: relative; }
 
 /* Header */
-.top-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-}
+.top-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; z-index: 10; }
+.save-btn { background: #ff2c55; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
 
-.save-btn {
-    background: #ff2c55;
-    color: white;
-    border: none;
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* Video Canvas */
-.main-view {
-    flex: 1;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-.canvas-area video {
-    max-width: 100%;
-    max-height: 50vh;
-    border-radius: 4px;
-}
-
-#upload-label {
-    text-align: center;
-    cursor: pointer;
-    color: #888;
-}
-
-#upload-label span {
-    font-size: 50px;
-    background: #333;
-    width: 80px;
-    height: 80px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    margin-bottom: 10px;
-}
+/* Video View */
+.main-view { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; }
+.canvas-area video { max-width: 100%; max-height: 60vh; }
+#upload-label { text-align: center; cursor: pointer; color: #888; }
+#upload-label span { font-size: 40px; background: #333; width: 70px; height: 70px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; margin-bottom: 10px; color: #ff2c55; }
 
 /* Tools */
-.controls-panel {
-    background: #222;
-    padding: 15px 0;
-}
-
-.tool-scroller {
-    display: flex;
-    gap: 20px;
-    padding: 0 15px;
-    overflow-x: auto;
-}
-
-.tool-btn {
-    background: none;
-    border: none;
-    color: #ccc;
-    font-size: 12px;
-    text-align: center;
-    cursor: pointer;
-}
-
-select {
-    display: block;
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 5px;
-    border-radius: 5px;
-    margin-top: 5px;
-}
+.controls-panel { background: #222; padding: 20px 0; border-radius: 20px 20px 0 0; }
+.tool-scroller { display: flex; gap: 25px; padding: 0 20px; overflow-x: auto; }
+.tool-btn { background: none; border: none; color: #fff; font-size: 13px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+select { background: #333; color: #fff; border: 1px solid #444; padding: 5px; border-radius: 5px; font-size: 11px; }
 
 /* Timeline */
-.timeline-section {
-    padding: 20px;
-    background: #1a1a1a;
-}
+.timeline-section { padding: 20px; background: #1a1a1a; }
+.time-counter { text-align: center; font-size: 12px; margin-bottom: 8px; color: #ff2c55; font-weight: bold; }
+.timeline-bar { height: 4px; background: #333; border-radius: 2px; position: relative; }
+#progress-pointer { width: 12px; height: 12px; background: #fff; border-radius: 50%; position: absolute; top: -4px; left: 0; box-shadow: 0 0 8px #ff2c55; }
 
-.time-counter {
-    text-align: center;
-    font-size: 12px;
-    margin-bottom: 5px;
-    color: #ff2c55;
-}
-
-.timeline-bar {
-    height: 50px;
-    background: #333;
-    border-radius: 5px;
-    position: relative;
-    overflow: hidden;
-}
-
-#progress-bar {
-    width: 2px;
-    height: 100%;
-    background: #fff;
-    position: absolute;
-    left: 0;
-    box-shadow: 0 0 10px #ff2c55;
-}
+/* Export Overlay (Yangi qism) */
+.overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: flex; justify-content: center; align-items: center; }
+.loader-box { text-align: center; width: 80%; }
+.spinner { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #ff2c55; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.progress-container { width: 100%; height: 6px; background: #333; border-radius: 3px; margin-top: 15px; overflow: hidden; }
+#export-progress-bar { width: 0%; height: 100%; background: #ff2c55; transition: width 0.3s; }

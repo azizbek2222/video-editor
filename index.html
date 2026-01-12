@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InShot Web Editor</title>
+    <title>InShot Pro Web</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -11,6 +11,16 @@
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 </head>
 <body>
+
+    <div id="export-overlay" class="overlay" style="display: none;">
+        <div class="loader-box">
+            <div class="spinner"></div>
+            <p id="export-status">Tayyorlanmoqda... 0%</p>
+            <div class="progress-container">
+                <div id="export-progress-bar"></div>
+            </div>
+        </div>
+    </div>
 
     <div class="inshot-container">
         <header class="top-nav">
@@ -21,10 +31,10 @@
 
         <div class="main-view">
             <div class="canvas-area">
-                <video id="main-video" playsinline></video>
+                <video id="main-video" playsinline style="display: none;"></video>
                 <label for="upload" id="upload-label">
                     <span>+</span>
-                    <p>Yangi video qo'shish</p>
+                    <p>Video yuklash</p>
                 </label>
                 <input type="file" id="upload" accept="video/*" hidden>
             </div>
@@ -38,22 +48,19 @@
                         <option value="none">Original</option>
                         <option value="grayscale(100%)">B&W</option>
                         <option value="sepia(80%)">Retro</option>
-                        <option value="blur(4px)">Blur</option>
-                        <option value="invert(100%)">Negative</option>
+                        <option value="blur(4px)">Xira</option>
+                        <option value="invert(100%)">Negativ</option>
                         <option value="hue-rotate(90deg)">Neon</option>
                     </select>
                 </div>
-                <button class="tool-btn" onclick="video.play()">▶ Play</button>
-                <button class="tool-btn" onclick="video.pause()">⏸ Pause</button>
+                <button class="tool-btn" id="play-pause">▶ Play</button>
             </div>
         </div>
 
         <footer class="timeline-section">
             <div class="time-counter" id="time-display">00:00</div>
             <div class="timeline-bar">
-                <div class="video-strip">
-                    <div id="progress-bar"></div>
-                </div>
+                <div id="progress-pointer"></div>
             </div>
         </footer>
     </div>

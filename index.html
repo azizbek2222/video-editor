@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InShot Web Editor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="coi-serviceworker.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+</head>
+<body>
+
+    <div class="inshot-container">
+        <header class="top-nav">
+            <button class="icon-btn">✕</button>
+            <div class="status-text">Video Editor</div>
+            <button class="save-btn" id="download-btn">SAVE</button>
+        </header>
+
+        <div class="main-view">
+            <div class="canvas-area">
+                <video id="main-video" playsinline></video>
+                <label for="upload" id="upload-label">
+                    <span>+</span>
+                    <p>Yangi video qo'shish</p>
+                </label>
+                <input type="file" id="upload" accept="video/*" hidden>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="tool-scroller">
+                <div class="tool-btn">
+                    <span>Filter</span>
+                    <select id="effect-select">
+                        <option value="none">Original</option>
+                        <option value="grayscale(100%)">B&W</option>
+                        <option value="sepia(80%)">Retro</option>
+                        <option value="blur(4px)">Blur</option>
+                        <option value="invert(100%)">Negative</option>
+                        <option value="hue-rotate(90deg)">Neon</option>
+                    </select>
+                </div>
+                <button class="tool-btn" onclick="video.play()">▶ Play</button>
+                <button class="tool-btn" onclick="video.pause()">⏸ Pause</button>
+            </div>
+        </div>
+
+        <footer class="timeline-section">
+            <div class="time-counter" id="time-display">00:00</div>
+            <div class="timeline-bar">
+                <div class="video-strip">
+                    <div id="progress-bar"></div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
